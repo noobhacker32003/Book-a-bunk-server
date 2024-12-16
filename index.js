@@ -10,48 +10,64 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
-
-
 const uri =  `mongodb+srv://book-a-bunk:${process.env.pass}@cluster0.fjfms.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
 });
 
 async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    app.get('/rooms', async(req, res) => {
-      const db = client.db("book-a-bunk");
-      const roomsCollection = db.collection("rooms");
-      const rooms = await roomsCollection.find().toArray();
-      res.json(rooms);
-    })
+    try {
+        // Connect the client to the server	(optional starting in v4.7)
+        await client.connect();
+        // Send a ping to confirm a successful connection
+        await client.db("admin").command({ ping: 1 });
+        console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    //await client.close();
-  }
+        app.get('/rooms', async(req, res) => {
+            const db = client.db("book-a-bunk");
+            const roomsCollection = db.collection("rooms");
+            const rooms = await roomsCollection.find().toArray();
+            res.json(rooms);
+          })
+        app.get('/feedback', async(req, res) => {
+            const db = client.db("book-a-bunk");
+            const feedbackCollection = db.collection("feedback");
+            const feedback = await feedbackCollection.find().toArray();
+            res.json(feedback);
+          })
+          app.post('/feedback', async (req, res) => {
+            const newFeedback = req.body;
+            //console.log('creating new feedback', newFeedback);
+            const db = client.db("book-a-bunk");
+            const feedbackCollection = db.collection("feedback");
+            const result =await feedbackCollection.insertOne(newFeedback);
+            console.log(result);
+            
+            res.send(result);
+        });
+
+
+
+
+
+    } finally {
+        // Ensures that the client will close when you finish/error
+        //   await client.close();
+    }
 }
 run().catch(console.dir);
 
-
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+    res.send('HOT HOT HOT COFFEEEEEEE')
 })
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+    console.log(`COffee is getting warmer in port: ${port}`);
 })
+
