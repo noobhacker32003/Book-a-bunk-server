@@ -51,6 +51,13 @@ async function run() {
             
             res.send(result);
         });
+        
+        app.get('/studyRooms', async(req, res) => {
+            const db = client.db("book-a-bunk");
+            const studyRoomsCollection = db.collection("study room");
+            const studyRooms = await studyRoomsCollection.find().toArray();
+            res.json(studyRooms);
+          })
 
 
 
