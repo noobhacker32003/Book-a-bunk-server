@@ -58,6 +58,49 @@ async function run() {
             const studyRooms = await studyRoomsCollection.find().toArray();
             res.json(studyRooms);
           })
+        app.get('/payments', async(req, res) => {
+            const db = client.db("book-a-bunk");
+            const paymentsCollection = db.collection("payments");
+            const payments = await paymentsCollection.find().toArray();
+            res.json(payments);
+          })
+        app.get('/bookings', async(req, res) => {
+            const db = client.db("book-a-bunk");
+            const bookingsCollection = db.collection("bookingHistory");
+            const bookings = await bookingsCollection.find().toArray();
+            res.json(bookings);
+          })
+
+          app.post('/bookings', async (req, res) => {
+            const newBooking = req.body;
+            const db = client.db("book-a-bunk");
+            const bookingCollection = db.collection("bookingHistory");
+        
+            try {
+                const result = await bookingCollection.insertOne(newBooking);
+                console.log('New booking added:', result);
+                res.send(result);
+            } catch (error) {
+                console.error('Error adding booking:', error);
+                res.status(500).send({ success: false, message: 'Failed to save booking' });
+            }
+        });
+        
+        // Payment History Endpoint
+        app.post('/payments', async (req, res) => {
+            const newPayment = req.body;
+            const db = client.db("book-a-bunk");
+            const paymentCollection = db.collection("payments");
+        
+            try {
+                const result = await paymentCollection.insertOne(newPayment);
+                console.log('New payment added:', result);
+                res.send(result);
+            } catch (error) {
+                console.error('Error adding payment:', error);
+                res.status(500).send({ success: false, message: 'Failed to save payment' });
+            }
+        });
 
 
 
