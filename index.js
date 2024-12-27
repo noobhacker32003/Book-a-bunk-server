@@ -101,6 +101,100 @@ async function run() {
                 res.status(500).send({ success: false, message: 'Failed to save payment' });
             }
         });
+        
+
+        // POST: Add a new user
+        app.post('/users', async (req, res) => {
+            const db = client.db("book-a-bunk");
+            const usersCollection = db.collection("users");
+            const newUser = req.body;
+            try {
+                const result = await usersCollection.insertOne(newUser);
+                console.log('New user added:', result);
+                res.status(201).send(result);
+            } catch (error) {
+                console.error('Error adding user:', error);
+                res.status(500).send({ success: false, message: 'Failed to add user' });
+            }
+        });
+
+        // GET: Retrieve all users
+        app.get('/users', async (req, res) => {
+            const db = client.db("book-a-bunk");
+        const usersCollection = db.collection("users");
+            try {
+                const users = await usersCollection.find().toArray();
+                res.send(users);
+            } catch (error) {
+                console.error('Error retrieving users:', error);
+                res.status(500).send({ success: false, message: 'Failed to retrieve users' });
+            }
+        });
+
+        // GET: Retrieve a single user by ID
+        app.get('/users/:uid', async (req, res) => {
+            const db = client.db("book-a-bunk");
+            const usersCollection = db.collection("users");
+            const { uid } = req.params; // Extract `uid` from the route parameter
+        
+            try {
+                // Query the collection using `uid`
+                const user = await usersCollection.findOne({ uid: uid });
+                
+                if (user) {
+                    res.send(user);
+                } else {
+                    res.status(404).send({ success: false, message: 'User not found' });
+                }
+            } catch (error) {
+                console.error('Error retrieving user:', error);
+                res.status(500).send({ success: false, message: 'Failed to retrieve user' });
+            }
+        });
+
+        // PUT: Update a user by ID
+        app.put('/users/:uid', async (req, res) => {
+            const db = client.db("book-a-bunk");
+            const usersCollection = db.collection("users");
+            const { uid } = req.params;  // Use uid to find the user
+            const updatedUser = req.body;  // The updated data
+        
+            try {
+                // Use the uid instead of _id for the update query
+                const result = await usersCollection.updateOne(
+                    { uid: uid },  // Match by uid
+                    { $set: updatedUser }  // Set the updated data
+                );
+        
+                if (result.modifiedCount > 0) {
+                    res.send({ success: true, message: 'User updated successfully' });
+                } else {
+                    res.status(404).send({ success: false, message: 'User not found or no changes made' });
+                }
+            } catch (error) {
+                console.error('Error updating user:', error);
+                res.status(500).send({ success: false, message: 'Failed to update user' });
+            }
+        });
+        
+
+        // DELETE: Remove a user by ID
+        app.delete('/users/:id', async (req, res) => {
+            const db = client.db("book-a-bunk");
+        const usersCollection = db.collection("users");
+            const { id } = req.params;
+            try {
+                const result = await usersCollection.deleteOne({ _id: new ObjectId(id) });
+                if (result.deletedCount > 0) {
+                    res.send({ success: true, message: 'User deleted successfully' });
+                } else {
+                    res.status(404).send({ success: false, message: 'User not found' });
+                }
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                res.status(500).send({ success: false, message: 'Failed to delete user' });
+            }
+        });
 
 
 
@@ -114,10 +208,10 @@ async function run() {
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-    res.send('HOT HOT HOT COFFEEEEEEE')
+    res.send('Its working')
 })
 
 app.listen(port, () => {
-    console.log(`COffee is getting warmer in port: ${port}`);
+    console.log(`server working in port: ${port}`);
 })
 
