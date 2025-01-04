@@ -35,6 +35,15 @@ async function run() {
             const rooms = await roomsCollection.find().toArray();
             res.json(rooms);
           })
+          app.post('/rooms', async (req, res) => {
+            const db = client.db("book-a-bunk");
+            const roomsCollection = db.collection("rooms");
+            const result = await roomsCollection.insertOne(req.body);
+            console.log(result);
+            
+            res.json(result);
+        });
+        
         app.get('/feedback', async(req, res) => {
             const db = client.db("book-a-bunk");
             const feedbackCollection = db.collection("feedback");
@@ -58,6 +67,15 @@ async function run() {
             const studyRooms = await studyRoomsCollection.find().toArray();
             res.json(studyRooms);
           })
+
+          app.post('/studyRooms', async (req, res) => {
+            const db = client.db("book-a-bunk");
+            const roomsCollection = db.collection("study room");
+            const result = await roomsCollection.insertOne(req.body);
+            console.log(result);
+            
+            res.json(result);
+        });
         app.get('/payments', async(req, res) => {
             const db = client.db("book-a-bunk");
             const paymentsCollection = db.collection("payments");
