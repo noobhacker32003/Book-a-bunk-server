@@ -39,10 +39,78 @@ async function run() {
             const db = client.db("book-a-bunk");
             const roomsCollection = db.collection("rooms");
             const result = await roomsCollection.insertOne(req.body);
-            console.log(result);
+            //console.log(result);
             
             res.json(result);
         });
+          app.post('/pcbookinghistory', async (req, res) => {
+            const db = client.db("book-a-bunk");
+            const roomsCollection = db.collection("pcbookinghistory");
+            const result = await roomsCollection.insertOne(req.body);
+            //console.log(result);
+            
+            res.json(result);
+        });
+          app.get('/pcbookinghistory', async (req, res) => {
+            const db = client.db("book-a-bunk");
+            const roomsCollection = db.collection("pcbookinghistory");
+            const result = await roomsCollection.find().toArray();
+            //console.log(result);
+            
+            res.json(result);
+        });
+          app.post('/orderDetails', async (req, res) => {
+            const db = client.db("book-a-bunk");
+            const roomsCollection = db.collection("order details");
+            const result = await roomsCollection.insertOne(req.body);
+            //console.log(result);
+            
+            res.json(result);
+        });
+          app.get('/orderDetails', async (req, res) => {
+            const db = client.db("book-a-bunk");
+            const roomsCollection = db.collection("order details");
+            const result = await roomsCollection.find().toArray();
+            
+            
+            res.json(result);
+        });
+        app.put('/orderDetails/:id', async (req, res) => {
+            const db = client.db("book-a-bunk");
+            const orderCollection = db.collection("order details");
+            const { id } = req.params;
+            
+            
+            const updatedOrder = req.body;
+            //console.log(updatedOrder);
+            
+            
+            
+        
+            try {
+                
+                const result = await orderCollection.updateOne(
+                    { _id: new ObjectId(id) },
+                    { $set: updatedOrder }
+                );
+                //console.log(result);
+                
+        
+                if (result.modifiedCount > 0) {
+                    
+                    
+                    res.send({ success: true, message: 'Order updated successfully' });
+                } else {
+                    res.status(404).send({ success: false, message: 'Order not found or no changes made' });
+                }
+            } catch (error) {
+                
+                
+                console.error('Error updating order:', error);
+                res.status(500).send({ success: false, message: 'Failed to update order' });
+            }
+        });
+        
         
         app.get('/feedback', async(req, res) => {
             const db = client.db("book-a-bunk");
@@ -56,7 +124,7 @@ async function run() {
             const db = client.db("book-a-bunk");
             const feedbackCollection = db.collection("feedback");
             const result =await feedbackCollection.insertOne(newFeedback);
-            console.log(result);
+            //console.log(result);
             
             res.send(result);
         });
@@ -72,7 +140,7 @@ async function run() {
             const db = client.db("book-a-bunk");
             const roomsCollection = db.collection("study room");
             const result = await roomsCollection.insertOne(req.body);
-            console.log(result);
+            //console.log(result);
             
             res.json(result);
         });
